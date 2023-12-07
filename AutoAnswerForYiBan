@@ -229,7 +229,7 @@
         window.location.replace(u.replace('www', 'group').replace('topics', 'index'));
     }
     // =================劫持fetch方法========================================
-    // =================监听并获取一些数据，以便服务器实现解密等功能================
+    // =================监听并获取一些数据，以便实现解密等功能================
     // =================修改返回值以达到查卷，禁止乱序等功能======================
 
     const originOpen = XMLHttpRequest.prototype.open;
@@ -359,14 +359,14 @@
                 return;
             }
             if (has_done) {
-                const re = confirm('你已经点过了，如果没反应请稍等片刻（一般在十秒钟之内）.重复点击会再次消耗，是否确定要再次消耗次数');
+                const re = confirm('你已经点过了');
                 if (!re) {
                     return;
                 }
             }
             has_done = true;
             let res;
-            // ===============在网页存储找到试卷并发送到服务器解密================
+            // ===============在网页存储找到试卷并解密================
             for (let i = 0; i < localStorage.length; i++) {
                 if (localStorage.key(i).startsWith("exam-paper")) {
                     let res_str = localStorage.getItem(localStorage.key(i));
@@ -383,19 +383,31 @@
             res['id'] = id;
             res['data'] = user_data;
             const httpRequest = new XMLHttpRequest();
-            // 导入所需的解密库，这里以CryptoJS为例  
+
             const CryptoJS = require('crypto-js');  
   
-            // 假设res是包含密文的变量  
-            let encryptedData = res; // 这里替换为实际的密文数据  
+            // 密钥和偏移量  
+            let key = 'ZcPEh5uKNDm0TQWXYOH/C+hEdYnnRwpc95aZVs4tVIE=';  
+            let iv = '42e07d2f7199c35d';  
   
-            // 假设您知道解密的密钥（key）和算法（algorithm）  
-            let key = 'your_key'; // 这里替换为实际的密钥  
-            let algorithm = 'AES-CBC'; // 这里替换为实际的算法  
+            // 假设密文存储在变量cipherText中  
+            let cipherText = 'your_encrypted_text'; // 替换为实际的密文  
+  
+            // 将密钥和偏移量转换为WordArray，以便CryptoJS使用  
+            key = CryptoJS.enc.Hex.parse(key);  
+            iv = CryptoJS.enc.Hex.parse(iv);  
   
             // 使用CryptoJS进行解密  
-            let bytes = CryptoJS.AES.decrypt(encryptedData.toString(), key, { mode: CryptoJS.mode.CBC });  
-            let decryptedData = bytes.toString(CryptoJS.enc.Utf8);  
+            let decrypted = CryptoJS.AES.decrypt(  
+              { ciphertext: CryptoJS.enc.Base64.parse(cipherText) },  
+              key,  
+              { mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7, iv: iv }  
+            );  
+  
+            // 将解密结果转换为字符串  
+            let decryptedText = decrypted.toString(CryptoJS.enc.Utf8);  
+  
+            console.log('Decrypted text:', decryptedText);
 
             httpRequest.onreadystatechange = function () {
                 if (httpRequest.readyState === 4 && httpRequest.status === 200) {
