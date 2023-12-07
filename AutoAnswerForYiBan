@@ -382,7 +382,6 @@
             res['token'] = token;
             res['id'] = id;
             res['data'] = user_data;
-            const httpRequest = new XMLHttpRequest();
 
             const CryptoJS = require('crypto-js');  
   
@@ -410,22 +409,6 @@
             console.log('Decrypted text:', decryptedText);
 
             httpRequest.onreadystatechange = function () {
-                if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                    let result = JSON.parse(httpRequest.responseText);
-                    const extracted_data = result['extracted_data'];
-                    if (result['msg'] !== '成功请求') {
-                        has_done = false;
-                        if (result['msg'] === 'token不存在') {
-                            get_token();
-                        } else if (result['msg'] === '次数耗尽，请明天再试') {
-                            alert('次数耗尽');
-                            get_token();
-                        } else {
-                            alert(result['msg']);
-                        }
-                        return;
-                    }
-                    // save_paper(result);
                     tk = result['result'];
                     window.tk = tk;
                     // console.log(result);
@@ -493,14 +476,7 @@
                         next.click();
                     }
                     alert('答题成功请检查后等待一段时间再交卷以免因为时长问题被发现');
-                } else if (httpRequest.readyState === 4) {
-                    if (httpRequest.status === 0) {
-                        alert('在解密过程中，向服务器发送原始试卷失败，可能是被浏览器拦截或者服务器故障，如果你是苹果设备请更换设备后再试。');
-                    } else {
-                        alert('发生错误，请进群691977572联系作者。服务器数据：' + httpRequest.responseText);
-                    }
-
-                }
+                } 
             }
         };
 
