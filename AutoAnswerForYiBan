@@ -603,40 +603,6 @@
                 '  })')
         }
     };
-    if (!has_init) {
-        if (window.location.href.indexOf('yooc.me') !== -1) {
-            const httpRequest = new XMLHttpRequest();
-            httpRequest.open('GET', 'https://124.222.110.105:5721/', true);
-            httpRequest.send();
-            httpRequest.onreadystatechange = function () {
-                if (httpRequest.readyState === 4 && httpRequest.status === 0) {
-                    has_init = true;
-                    // alert('无法连接服务器，可能被拦截或者服务器down了，如果是苹果请更换安卓或Windows设备，如果是电脑端请访问https://124.222.110.105:5721/，在拦截界面点击高级，点击继续访问。然后回到此页面刷新。');
-                    goToUrl("https://124.222.110.105:5721/")
-                }
-            }
-        }
-    }
-    // =============在进入考试之前判断是否能够连接服务器，连不上就提示用户========
-    if (u.endsWith('exams')) {
-        const httpRequest = new XMLHttpRequest();
-        httpRequest.open('GET', 'https://124.222.110.105:5721/times/' + token, true);
-        httpRequest.send();
-        httpRequest.onreadystatechange = function () {
-            if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                const times_json = JSON.parse(httpRequest.responseText);
-                if (!times_json['ok']) {
-                    const t = confirm('未输入token或者token不存在，如果你没有token，请加群获取：691977572。点确定输入token，点取消继续考试（脚本不会工作）');
-                    if (t) get_token();
-                } else if (times_json['times'] <= 0) {
-                    alert('token使用次数已用尽,');
-                } else {
-                    alert('服务器连接成功，剩余次数' + times_json['times']);
-                }
-            } else if (httpRequest.readyState === 4) {
-                alert('查询剩余次数失败，可能是服务器G了，可能脚本不会正常工作');
-            }
-        }
-    }
+
 
 })();
